@@ -1,0 +1,15 @@
+{
+  "name": "docgen",
+  "version": "1.0.0",
+  "description": "Document manager service",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "author": "pdittaro@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "carbone": "^1.2.1"
+  }
+}
