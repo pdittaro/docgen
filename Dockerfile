@@ -1,22 +1,20 @@
-FROM ubuntu
+FROM alpine:3.10
 
 WORKDIR /app
 
-# Install nodejs
-RUN apt install nodejs npm
-
-# Install libreoffice
-RUN wget https://downloadarchive.documentfoundation.org/libreoffice/old/5.3.2.2/deb/x86_64/LibreOffice_5.3.2.2_Linux_x86-64_deb.tar.gz
-RUN apt install libxinerama1 libfontconfig1 libdbus-glib-1-2 libcairo2 libcups2 libglu1-mesa libsm6
-
-RUN tar -zxvf LibreOffice_5.3.2.2_Linux_x86-64_deb.tar.gz /opt
-RUN cd LibreOffice_5.3.2.2_Linux_x86-64_deb/DEBS
-
+# Install dependencies
+RUN apk update && \
+    apk upgrade && \
+    apk add bash nodejs npm libreoffice-writer openjdk8-jre
 
 # Install microsoft fonts
 RUN apk --no-cache add msttcorefonts-installer fontconfig && \
     update-ms-fonts && \
     fc-cache -f
+
+# Bind carbone python
+COPY python bindPython.sh ./
+RUN chmod a+rx bindPython.sh && ./bindPython.sh
 
 # Install app dependencies
 COPY package.json package-lock.json ./
@@ -24,5 +22,6 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+RUN chmod a+x docker-entrypoint.sh
 
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "/app/docker-entrypoint.sh" ]
